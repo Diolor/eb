@@ -30,6 +30,7 @@ document.querySelectorAll('.lang-switch button').forEach((btn) => {
 // ---------- Sticky header + hero parallax ----------
 const header = document.querySelector('.site-header');
 const heroBg = document.querySelector('.hero-bg');
+const toTop = document.querySelector('.to-top');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let parallaxTicking = false;
 
@@ -43,7 +44,7 @@ function applyParallax() {
 
 const onScroll = () => {
   header.classList.toggle('scrolled', window.scrollY > 40);
-  document.querySelector('.to-top').classList.toggle('visible', window.scrollY > 700);
+  if (toTop) toTop.classList.toggle('visible', window.scrollY > 700);
   if (heroBg && !reducedMotion && !parallaxTicking) {
     parallaxTicking = true;
     requestAnimationFrame(applyParallax);
@@ -59,11 +60,13 @@ if (navToggle) {
   navToggle.addEventListener('click', () => {
     const open = navLinks.classList.toggle('open');
     navToggle.setAttribute('aria-expanded', String(open));
+    header.classList.toggle('menu-open', open);
   });
   navLinks.querySelectorAll('a').forEach((a) => {
     a.addEventListener('click', () => {
       navLinks.classList.remove('open');
       navToggle.setAttribute('aria-expanded', 'false');
+      header.classList.remove('menu-open');
     });
   });
 }

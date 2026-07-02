@@ -25,6 +25,9 @@
 
 html { scroll-behavior: smooth; }
 
+/* keep anchor targets clear of the fixed header */
+[id] { scroll-margin-top: 82px; }
+
 body {
   font-family: var(--font-body);
   color: var(--ink);
@@ -90,7 +93,8 @@ h3 { font-size: 1.35rem; }
   padding: .6rem 0;
 }
 .site-header.solid,
-.site-header.scrolled {
+.site-header.scrolled,
+.site-header.menu-open {
   background: rgba(14, 42, 28, .92);
   backdrop-filter: blur(12px);
   box-shadow: 0 2px 20px rgba(0,0,0,.25);
@@ -129,6 +133,10 @@ h3 { font-size: 1.35rem; }
   transition: background .2s ease, color .2s ease;
 }
 .lang-switch button.active { background: #fff; color: var(--forest-dark); }
+
+/* in-menu language switch: only shown on small screens where the
+   header row has no room for the inline one */
+.nav-lang { display: none; }
 
 .nav-toggle { display: none; }
 
@@ -514,6 +522,19 @@ html.js .reveal.visible { opacity: 1; transform: none; }
   }
   .nav-links.open { transform: translateY(0); visibility: visible; }
   .nav-links a:not(.btn) { font-size: 1.05rem; }
+}
+
+/* Below ~700px the header row (brand + hamburger + language switch)
+   no longer fits, so the switch moves into the menu. */
+@media (max-width: 699px) {
+  .nav > .lang-switch { display: none; }
+  .nav-lang { display: block; align-self: stretch; padding-bottom: .5rem; border-bottom: 1px solid rgba(255,255,255,.18); }
+  .nav-lang .lang-switch { display: inline-flex; margin-left: 0; }
+}
+
+@media (max-width: 379px) {
+  .brand { font-size: 1rem; gap: .45rem; }
+  .brand img { width: 40px; height: 40px; }
 }
 
 @media (max-width: 1100px) {

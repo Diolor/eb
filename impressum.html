@@ -6,6 +6,7 @@
   <title>Impressum – Initiative Emmauswald bleibt!</title>
   <meta name="robots" content="noindex">
   <link rel="icon" type="image/png" href="assets/img/EmmausWald_logo_centered.png">
+  <meta name="theme-color" content="#0e2a1c">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
@@ -16,7 +17,7 @@
 </head>
 <body>
 
-<header class="site-header solid" id="top">
+<header class="site-header solid">
   <nav class="nav container">
     <a class="brand" href="index.html">
       <img src="assets/img/EmmausWald_logo_centered.png" alt="Emmauswald bleibt! Logo">
@@ -26,6 +27,13 @@
       <span></span><span></span><span></span>
     </button>
     <ul class="nav-links">
+      <li class="nav-lang">
+        <div class="lang-switch" role="group" aria-label="Sprache / Language">
+          <button data-set-lang="de" class="active">DE</button>
+          <button data-set-lang="en">EN</button>
+          <button data-set-lang="tr">TR</button>
+        </div>
+      </li>
       <li><a href="index.html#wald"><span class="de">Der Wald</span><span class="en">The Forest</span><span class="tr">Orman</span></a></li>
       <li><a href="index.html#news"><span class="de">News</span><span class="en">News</span><span class="tr">Haberler</span></a></li>
       <li><a href="index.html#spenden"><span class="de">Spenden</span><span class="en">Donate</span><span class="tr">Bağış</span></a></li>
