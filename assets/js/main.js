@@ -20,17 +20,34 @@ document.querySelectorAll('.lang-switch button').forEach((btn) => {
 (function initLang() {
   let saved = null;
   try { saved = localStorage.getItem('emmauswald-lang'); } catch (e) {}
-  if (!saved) {
-    saved = (navigator.language || 'de').toLowerCase().startsWith('de') ? 'de' : 'en';
+  if (!saved || !['de', 'en', 'tr'].includes(saved)) {
+    const nav = (navigator.language || 'de').toLowerCase();
+    saved = nav.startsWith('de') ? 'de' : nav.startsWith('tr') ? 'tr' : 'en';
   }
   setLang(saved);
 })();
 
-// ---------- Sticky header ----------
+// ---------- Sticky header + hero parallax ----------
 const header = document.querySelector('.site-header');
+const heroBg = document.querySelector('.hero-bg');
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let parallaxTicking = false;
+
+function applyParallax() {
+  parallaxTicking = false;
+  const y = window.scrollY;
+  if (y <= window.innerHeight * 1.2) {
+    heroBg.style.transform = `translate3d(0, ${(y * 0.28).toFixed(1)}px, 0)`;
+  }
+}
+
 const onScroll = () => {
   header.classList.toggle('scrolled', window.scrollY > 40);
   document.querySelector('.to-top').classList.toggle('visible', window.scrollY > 700);
+  if (heroBg && !reducedMotion && !parallaxTicking) {
+    parallaxTicking = true;
+    requestAnimationFrame(applyParallax);
+  }
 };
 window.addEventListener('scroll', onScroll, { passive: true });
 onScroll();
