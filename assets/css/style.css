@@ -344,6 +344,8 @@ a.action:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
 .press-list .title { color: var(--ink); font-size: .98rem; }
 .press-list .title:hover { text-decoration: underline; }
 .paywall { color: var(--ink-soft); font-size: .85em; }
+.press-list a.press-sub { padding-top: 0; margin-top: -.45rem; }
+.press-list .press-sub .title { font-size: .88rem; color: var(--forest-mid); font-weight: 600; }
 
 /* ---------- Dark sections ---------- */
 .section-dark { background: var(--forest-dark); color: rgba(255,255,255,.92); }
