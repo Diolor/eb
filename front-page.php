@@ -229,6 +229,7 @@
         <p class="de">Werde Mitglied unserer Telegramgruppe, in der fortlaufend Infos zum aktuellen Stand, Möglichkeiten zur Beteiligung oder Termine für Treffen geteilt werden.</p>
         <p class="en">Become a member of our Telegram group, where we continuously share updates on the current situation, ways to get involved and dates for meetings.</p>
         <p class="tr">Güncel durum, katılım olanakları ve toplantı tarihlerinin sürekli paylaşıldığı Telegram grubumuza üye ol.</p>
+        <span class="action-cta">📣 <span class="de">Zur Telegramgruppe</span><span class="en">Join the Telegram group</span><span class="tr">Telegram grubuna katıl</span> <span class="arrow">→</span></span>
       </a>
       <div class="action reveal">
         <span class="action-num">02</span>
@@ -243,6 +244,7 @@
         <p class="de">Setze mit deiner Unterschrift ein Zeichen für den Erhalt des Emmauswaldes. Die Petition gegen die Bebauung des ehemaligen Friedhofs hat zum jetzigen Stand über 22.000 Unterschriften.</p>
         <p class="en">Make a statement for the preservation of the Emmaus Forest with your signature. The petition against the development of the former cemetery currently has over 22,000 signatures.</p>
         <p class="tr">İmzanla Emmaus Ormanı'nın korunması için bir işaret ver. Eski mezarlığın imara açılmasına karşı dilekçe şu ana kadar 22.000'den fazla imzaya ulaştı.</p>
+        <span class="action-cta">✍️ <span class="de">Jetzt unterschreiben</span><span class="en">Sign now</span><span class="tr">Hemen imzala</span> <span class="arrow">→</span></span>
       </a>
       <div class="action reveal">
         <span class="action-num">04</span>
