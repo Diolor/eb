@@ -27,6 +27,11 @@ the `main` branch still contains the plain static version.
 4. Optional: set a site icon under *Appearance → Customize → Site Identity*
    (otherwise the theme falls back to the initiative logo).
 
+**Hands-off migration:** the [`migration/`](migration/) folder contains a
+complete non-technical guide (`MIGRATION.md`) for Strato or wordpress.com;
+`migration/build.sh` assembles the deliverables (theme zip, content.xml,
+handbook) into `migration/dist/`.
+
 No page needs to be assigned as the front page: `front-page.php` renders the
 one-pager automatically for the site's start page.
 

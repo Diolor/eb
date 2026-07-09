@@ -1,0 +1,5 @@
+# Excluded from the theme zip built with `git archive` (migration/build.sh)
+migration export-ignore
+data export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
