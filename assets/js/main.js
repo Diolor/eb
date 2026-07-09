@@ -128,6 +128,15 @@ if (lightbox) {
   });
 }
 
+// ---------- Expandable lists (older news / earlier events) ----------
+document.querySelectorAll('[data-expand]').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const target = document.getElementById(btn.dataset.expand);
+    if (target) target.hidden = false;
+    btn.remove();
+  });
+});
+
 // ---------- Footer year ----------
 const yearEl = document.getElementById('year');
 if (yearEl) yearEl.textContent = new Date().getFullYear();

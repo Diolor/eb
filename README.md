@@ -11,10 +11,13 @@ the `main` branch still contains the plain static version.
    On wordpress.com this requires any **paid plan** (Personal or higher – custom
    theme upload is not available on the free plan).
 2. **Content:** import `data/content.xml` via *Tools → Import → WordPress*
-   (install the suggested "WordPress Importer" when prompted). This creates:
+   (install the suggested "WordPress Importer" when prompted, and tick
+   **"Download and import file attachments"**). This creates:
    - the 9 historical **news posts** (regular posts, original dates preserved),
    - the 3 past **events** (post type "Veranstaltungen"),
    - all 33 **press clippings** (post type "Pressespiegel"),
+   - all 36 **gallery photos** as Media Library attachments (downloaded from
+     the public static site at `diolor.github.io/eb`),
    - the **Impressum** page (slug `impressum`; its content is rendered by
      `page-impressum.php`, so the page itself can stay empty).
 
@@ -32,11 +35,13 @@ one-pager automatically for the site's start page.
 **Dynamic (managed in WordPress):**
 
 - **News** – regular posts, newest first in the "News" section of the front page.
+  The 3 newest are visible; older ones collapse behind a "Show older news" button.
 - **Events (Kalender)** – post type "Veranstaltungen". The meta field
   `ewb_event_date` (format `YYYY-MM-DD`) controls sorting and the timeline date
   badge in all three languages. Events on/after today appear under "Veranstaltungen",
-  older ones under "Vergangene Veranstaltungen"; with no upcoming events the
-  Telegram hint is shown. The post content is the timeline body
+  older ones under "Vergangene Veranstaltungen" (3 visible, the rest behind a
+  "Show earlier events" button); with no upcoming events the Telegram hint is
+  shown. The post content is the timeline body
   (`<h4>` title + `<p class="loc">` location + description paragraphs).
 - **Press (Pressespiegel)** – post type "Pressespiegel", grouped by year of the
   post date (which controls ordering). Meta fields: `ewb_press_outlet`,
@@ -44,14 +49,19 @@ one-pager automatically for the site's start page.
   `11/2024`), and optional `ewb_press_sub` = `1` for indented follow-up links.
   Edit meta fields via the "Custom Fields" panel (enable it under the editor's
   *Options → Preferences → Panels* if hidden).
+- **Gallery** – shows every image in the Media Library (site-icon crops
+  excluded), ordered by upload date; new uploads appear at the end.
 - **Petition & Telegram links** – *Appearance → Customize → Emmauswald: Links / Kampagne*.
 - Page `<title>`, favicon/site icon, footer year, feeds.
 
 **Static (baked into the theme templates):**
 
-- Hero, stats, "Der Wald", demands, "Mitmachen", donate, material downloads,
-  gallery and contact. Edit these directly in `front-page.php` – they change
-  rarely and stay pixel-identical to the static site.
+- Hero, stats, "Der Wald", demands, "Mitmachen", donate, material downloads
+  and contact. Edit these directly in `front-page.php` – they change rarely
+  and stay pixel-identical to the static site.
+
+**Editor guide:** see [HANDBOOK.md](HANDBOOK.md) (German + English) for
+step-by-step, non-technical instructions with copy-paste trilingual templates.
 
 ## Trilingual content
 

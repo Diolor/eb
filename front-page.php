@@ -273,12 +273,20 @@
       <?php
       $ewb_news = new WP_Query(
         array(
-          'posts_per_page'      => 10,
+          'posts_per_page'      => -1,
           'ignore_sticky_posts' => true,
         )
       );
+      $ewb_news_i     = 0;
+      $ewb_news_total = (int) $ewb_news->post_count;
       while ( $ewb_news->have_posts() ) :
         $ewb_news->the_post();
+        $ewb_news_i++;
+        if ( 4 === $ewb_news_i ) :
+          ?>
+          <div class="list-more" id="news-more" hidden>
+          <?php
+        endif;
         ?>
         <article class="news-item reveal">
           <div class="news-meta"><time datetime="<?php echo esc_attr( get_the_date( 'Y-m-d' ) ); ?>"><?php echo esc_html( get_the_date( 'd.m.Y' ) ); ?></time></div>
@@ -291,7 +299,18 @@
       endwhile;
       wp_reset_postdata();
 
-      if ( ! $ewb_news->have_posts() ) :
+      if ( $ewb_news_total > 3 ) :
+        ?>
+          </div>
+          <button class="expand-toggle" type="button" data-expand="news-more">
+            <span class="de">Ältere News anzeigen (<?php echo (int) ( $ewb_news_total - 3 ); ?>)</span>
+            <span class="en">Show older news (<?php echo (int) ( $ewb_news_total - 3 ); ?>)</span>
+            <span class="tr">Daha eski haberleri göster (<?php echo (int) ( $ewb_news_total - 3 ); ?>)</span>
+          </button>
+        <?php
+      endif;
+
+      if ( 0 === $ewb_news_total ) :
         ?>
         <p class="muted">
           <span class="de">Noch keine News vorhanden. Importiert <code>data/content.xml</code> oder legt Beiträge an.</span>
@@ -379,12 +398,20 @@
       )
     );
     if ( $ewb_past->have_posts() ) :
+      $ewb_past_i     = 0;
+      $ewb_past_total = (int) $ewb_past->post_count;
       ?>
       <h3 class="timeline-title reveal"><span class="de">Vergangene Veranstaltungen</span><span class="en">Past events</span><span class="tr">Geçmiş etkinlikler</span></h3>
       <div class="timeline">
         <?php
         while ( $ewb_past->have_posts() ) :
           $ewb_past->the_post();
+          $ewb_past_i++;
+          if ( 4 === $ewb_past_i ) :
+            ?>
+            <div class="list-more" id="events-more" hidden>
+            <?php
+          endif;
           ?>
           <div class="timeline-item reveal">
             <div class="timeline-date"><?php echo ewb_timeline_date_html( get_post_meta( get_the_ID(), 'ewb_event_date', true ) ); ?></div>
@@ -395,6 +422,16 @@
           <?php
         endwhile;
         wp_reset_postdata();
+        if ( $ewb_past_total > 3 ) :
+          ?>
+          </div>
+          <button class="expand-toggle" type="button" data-expand="events-more">
+            <span class="de">Frühere Veranstaltungen anzeigen (<?php echo (int) ( $ewb_past_total - 3 ); ?>)</span>
+            <span class="en">Show earlier events (<?php echo (int) ( $ewb_past_total - 3 ); ?>)</span>
+            <span class="tr">Önceki etkinlikleri göster (<?php echo (int) ( $ewb_past_total - 3 ); ?>)</span>
+          </button>
+          <?php
+        endif;
         ?>
       </div>
     <?php endif; ?>
@@ -568,42 +605,53 @@
       </p>
     </div>
     <div class="gallery">
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/IMG_20220526_095047-scaled.jpg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/IMG_20220526_095047-scaled.jpg" alt="Waldweg im Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/IMG_20220525_095958-scaled.jpg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/IMG_20220525_095958-scaled.jpg" alt="Pfad durch den Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/IMG_20220522_090711-scaled.jpg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/IMG_20220522_090711-scaled.jpg" alt="Lichtung im Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/drohnenflug-c3bcber-gelc3a4nde-des-zukc3bcnftigen-neumarien.webp"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/drohnenflug-c3bcber-gelc3a4nde-des-zukc3bcnftigen-neumarien.webp" alt="Drohnenaufnahme über dem Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/IMG_20220507_101130-scaled.jpg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/IMG_20220507_101130-scaled.jpg" alt="Bäume im Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/IMG_20220802_190527-scaled.jpg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/IMG_20220802_190527-scaled.jpg" alt="Abendlicht im Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/photo_2023-04-11_20-35-29.jpg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/photo_2023-04-11_20-35-29.jpg" alt="Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/photo_2023-04-11_20-35-30.jpg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/photo_2023-04-11_20-35-30.jpg" alt="Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/photo_2023-04-11_20-35-31.jpg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/photo_2023-04-11_20-35-31.jpg" alt="Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/photo_2023-04-11_20-35-31-2.jpg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/photo_2023-04-11_20-35-31-2.jpg" alt="Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/photo_2023-04-11_20-35-31-3.jpg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/photo_2023-04-11_20-35-31-3.jpg" alt="Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/photo_2023-04-11_20-35-32.jpg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/photo_2023-04-11_20-35-32.jpg" alt="Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/photo_2023-04-11_20-35-33.jpg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/photo_2023-04-11_20-35-33.jpg" alt="Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/photo_2023-04-11_20-35-33-2.jpg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/photo_2023-04-11_20-35-33-2.jpg" alt="Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/38A6806C-B539-4F68-AC13-0DDD2384F1C9_1_105_c.jpeg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/38A6806C-B539-4F68-AC13-0DDD2384F1C9_1_105_c.jpeg" alt="Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/51A936DA-4821-43F2-A3DD-99A9DC3DBFF6_1_105_c.jpeg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/51A936DA-4821-43F2-A3DD-99A9DC3DBFF6_1_105_c.jpeg" alt="Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/A837E058-8412-4D3A-B49A-1EB3BA6C1C6B_1_105_c.jpeg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/A837E058-8412-4D3A-B49A-1EB3BA6C1C6B_1_105_c.jpeg" alt="Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/48CE3F29-7554-4F98-A300-905D941357F7_1_105_c.jpeg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/48CE3F29-7554-4F98-A300-905D941357F7_1_105_c.jpeg" alt="Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/066E0D46-E494-41A6-BDC0-2574130500F2_1_105_c.jpeg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/066E0D46-E494-41A6-BDC0-2574130500F2_1_105_c.jpeg" alt="Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/727B96BA-B278-4314-9CC5-42E27E1BF3EC_1_105_c.jpeg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/727B96BA-B278-4314-9CC5-42E27E1BF3EC_1_105_c.jpeg" alt="Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/1331A8F5-CAE8-46AA-97D3-B447F77639CB_1_105_c.jpeg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/1331A8F5-CAE8-46AA-97D3-B447F77639CB_1_105_c.jpeg" alt="Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/59592ADE-3610-4F04-BA79-652AB660C972_1_105_c.jpeg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/59592ADE-3610-4F04-BA79-652AB660C972_1_105_c.jpeg" alt="Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/2AD504AA-77F3-4AA2-AEC7-69DD18E5FABA_1_105_c.jpeg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/2AD504AA-77F3-4AA2-AEC7-69DD18E5FABA_1_105_c.jpeg" alt="Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/CCA2F8CF-B118-4F1E-8CC8-FDFC24057534_1_105_c.jpeg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/CCA2F8CF-B118-4F1E-8CC8-FDFC24057534_1_105_c.jpeg" alt="Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/E28A3277-80EE-40DE-AF09-1625FF1BEEFB_1_105_c.jpeg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/E28A3277-80EE-40DE-AF09-1625FF1BEEFB_1_105_c.jpeg" alt="Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/EEED057B-15F5-46DB-BC07-EDF88721146C_1_105_c.jpeg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/EEED057B-15F5-46DB-BC07-EDF88721146C_1_105_c.jpeg" alt="Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/F9CFB5F4-8DDF-48AA-A956-8CAB54846E23_1_105_c.jpeg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/F9CFB5F4-8DDF-48AA-A956-8CAB54846E23_1_105_c.jpeg" alt="Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/FFEF9DB8-987C-45EF-8888-AC896AC1740E_1_105_c.jpeg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/FFEF9DB8-987C-45EF-8888-AC896AC1740E_1_105_c.jpeg" alt="Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/image.jpeg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/image.jpeg" alt="Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/Rathaus-1-1024x768.jpg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/Rathaus-1-1024x768.jpg" alt="Kundgebung vor dem Rathaus Neukölln" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/emmauswald_flaeche.jpg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/emmauswald_flaeche.jpg" alt="Karte der Emmauswald-Fläche" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/327821480_492361599732990_712757544467849846_n.jpg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/327821480_492361599732990_712757544467849846_n.jpg" alt="Aktion für den Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/327711380_569748478397382_8661449255103907692_n.jpg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/327711380_569748478397382_8661449255103907692_n.jpg" alt="Aktion für den Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/327711384_1396602637775672_2246163611807399289_n.jpg"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/327711384_1396602637775672_2246163611807399289_n.jpg" alt="Aktion für den Emmauswald" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/Emmauswald_Fotos_Seite1.png"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/Emmauswald_Fotos_Seite1.png" alt="Emmauswald Fotoübersicht Seite 1" loading="lazy"></a>
-      <a href="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/Emmauswald_Fotos_Seite2.png"><img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/img/Emmauswald_Fotos_Seite2.png" alt="Emmauswald Fotoübersicht Seite 2" loading="lazy"></a>
+      <?php
+      $ewb_gallery = new WP_Query(
+        array(
+          'post_type'      => 'attachment',
+          'post_status'    => 'inherit',
+          'post_mime_type' => 'image',
+          'posts_per_page' => -1,
+          'orderby'        => 'date',
+          'order'          => 'ASC',
+          'meta_query'     => array(
+            'relation' => 'OR',
+            array(
+              'key'     => '_wp_attachment_context',
+              'compare' => 'NOT EXISTS',
+            ),
+            array(
+              'key'     => '_wp_attachment_context',
+              'value'   => 'site-icon',
+              'compare' => '!=',
+            ),
+          ),
+        )
+      );
+      while ( $ewb_gallery->have_posts() ) :
+        $ewb_gallery->the_post();
+        $ewb_full  = wp_get_attachment_image_url( get_the_ID(), 'full' );
+        $ewb_thumb = wp_get_attachment_image_url( get_the_ID(), 'large' );
+        $ewb_alt   = get_post_meta( get_the_ID(), '_wp_attachment_image_alt', true );
+        if ( ! $ewb_thumb ) {
+          $ewb_thumb = $ewb_full;
+        }
+        ?>
+        <a href="<?php echo esc_url( $ewb_full ); ?>"><img src="<?php echo esc_url( $ewb_thumb ); ?>" alt="<?php echo esc_attr( $ewb_alt ? $ewb_alt : get_the_title() ); ?>" loading="lazy"></a>
+        <?php
+      endwhile;
+      wp_reset_postdata();
+
+      if ( 0 === (int) $ewb_gallery->post_count ) :
+        ?>
+        <p class="muted" style="grid-column:1/-1">
+          <span class="de">Noch keine Bilder in der Mediathek. Importiert <code>data/content.xml</code> oder ladet Fotos unter „Medien“ hoch.</span>
+          <span class="en">No images in the Media Library yet. Import <code>data/content.xml</code> or upload photos under "Media".</span>
+          <span class="tr">Medya kitaplığında henüz görsel yok. <code>data/content.xml</code> dosyasını içe aktarın veya "Medya" altında fotoğraf yükleyin.</span>
+        </p>
+        <?php
+      endif;
+      ?>
     </div>
   </div>
 </section>
