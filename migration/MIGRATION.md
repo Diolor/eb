@@ -161,13 +161,33 @@ different format and would *not* appear in the new calendar.
 
 ### C1. Back up everything (do not skip)
 
-1. **Werkzeuge → Daten exportieren** (*Tools → Export*) → "Alle Inhalte" →
-   download the XML file. This preserves all old posts/pages permanently —
-   they can be re-imported any time.
-2. Make a full backup of webspace + database (Strato: BackupControl; or the
-   free plugin "UpdraftPlus" → backup → download the files). Only continue
-   once you have both backups saved locally.
-3. Write down which plugins are active (*Plugins* list, e.g. screenshot).
+Make three backups — they cover different failure cases:
+
+1. **Content export:** **Werkzeuge → Daten exportieren** (*Tools → Export*) →
+   "Alle Inhalte" → download the XML file. This preserves all old
+   posts/pages/media references permanently — they can be re-imported any time.
+2. **Full site backup (files + database):** install the free plugin
+   **UpdraftPlus** (*Plugins → Installieren* → search "UpdraftPlus") →
+   *Einstellungen → UpdraftPlus Backups* → **"Jetzt sichern"** with both
+   boxes ticked (database + files) → when finished, **download all backup
+   components** (Datenbank, Plugins, Themes, Uploads, Sonstige) to your
+   computer via the "Existierende Backups" list.
+   On Strato, additionally note that **BackupControl** (Strato panel) keeps
+   automatic webspace snapshots you can roll back to.
+3. **Configuration notes:** screenshot the *Plugins* list (which are active),
+   *Einstellungen → Allgemein* and *Einstellungen → Lesen* pages, and the
+   menu/widget setup if the old theme uses them.
+
+**Verify before continuing:**
+
+- [ ] The export XML and every UpdraftPlus file are on your computer
+      (and ideally a second place, e.g. a cloud drive)
+- [ ] File sizes are plausible (the uploads/media archive is usually the
+      largest — a suspiciously tiny file means the backup is incomplete)
+- [ ] You know the wp-admin login AND the Strato customer login (needed for
+      BackupControl restores if wp-admin ever becomes unreachable)
+
+Do not continue to C3 until every box is checked.
 
 ### C2. Check the environment
 
@@ -212,10 +232,28 @@ Now follow the standard steps from Part A:
    the old configuration.
 4. **A6** – run the full verification checklist.
 
-### C5. Aftercare
+### C5. Rollback — restoring the old site if something goes wrong
 
-1. Watch the site for a few days; if anything is wrong, the C1 backups can
-   restore the old state completely.
+The C1 backups make the override fully reversible:
+
+1. **Full restore (recommended):** *Einstellungen → UpdraftPlus Backups* →
+   "Existierende Backups" → **Wiederherstellen** — or, if the backup files
+   are only on your computer, upload them on the same screen first
+   ("Backup-Dateien hochladen"). Tick all components (database, plugins,
+   themes, uploads) → restore → then *Design → Themes* → reactivate
+   **Twenty Twenty-One** and reactivate the plugins from your C1 screenshot.
+2. **If wp-admin itself is broken:** Strato panel → **BackupControl** →
+   restore the webspace (and database) to a date before the migration.
+3. **Content-only restore:** re-import the C1 export XML via
+   *Werkzeuge → Daten importieren → WordPress* (recovers posts/pages, but not
+   theme/plugin settings — hence prefer option 1).
+
+After any restore, clear browser cache and re-check the site.
+
+### C6. Aftercare
+
+1. Watch the site for a few days; keep the C1 backups at least until the
+   initiative has signed off on the new site.
 2. Once satisfied: delete the deactivated old plugins and the old theme
    (*Design → Themes* → Twenty Twenty-One → Löschen; keep one default theme
    like Twenty Twenty-Five as WordPress fallback).
