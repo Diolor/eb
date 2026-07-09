@@ -16,6 +16,14 @@ No coding knowledge is required; every step happens in a web browser.
 To regenerate `dist/` from the git repository: `cd migration && ./build.sh`
 (requires the `wordpress-theme` branch checked out).
 
+**Which part applies to you?**
+
+- Fresh WordPress on a **new Strato package** → Part A
+- Fresh WordPress on **wordpress.com** → Part B
+- **Existing WordPress site** that should be replaced (e.g. the current
+  `emmauswald-bleibt.de`) → Part C (which reuses steps from Part A)
+- Pointing the real **domain** at the new site later → Part D
+
 ---
 
 ## Part A: Strato (new "WordPress Hosting Basic" package)
@@ -26,7 +34,7 @@ To regenerate `dist/` from the git repository: `cd migration && ./build.sh`
    first month free, no setup fee, then ~€5/month).
 2. During checkout, **defer the included free domain** ("Domain später
    auswählen") — the real domain `emmauswald-bleibt.de` currently lives in
-   another Strato account (see Part C) and the free-domain credit should stay
+   another Strato account (see Part D) and the free-domain credit should stay
    available until after the handover.
 3. Complete the order with your personal and payment details.
 
@@ -138,7 +146,87 @@ A5.2–A5.5 → A6 checklist.
 
 ---
 
-## Part C: Connecting the real domain (after handover)
+## Part C: Overriding an EXISTING WordPress site
+
+Use this part when deploying into a WordPress installation that already has a
+theme, plugins and content — for example the current site at
+`emmauswald-bleibt.de` (WordPress with the Twenty Twenty-One theme and the
+"The Events Calendar" plugin). The order of steps matters here.
+
+**Why the old content can't simply stay:** the new front page automatically
+shows **every post** in the News section and **every Media Library image** in
+the photo gallery. Leftover posts and images from the old site would therefore
+appear on the new front page. Old events from "The Events Calendar" use a
+different format and would *not* appear in the new calendar.
+
+### C1. Back up everything (do not skip)
+
+1. **Werkzeuge → Daten exportieren** (*Tools → Export*) → "Alle Inhalte" →
+   download the XML file. This preserves all old posts/pages permanently —
+   they can be re-imported any time.
+2. Make a full backup of webspace + database (Strato: BackupControl; or the
+   free plugin "UpdraftPlus" → backup → download the files). Only continue
+   once you have both backups saved locally.
+3. Write down which plugins are active (*Plugins* list, e.g. screenshot).
+
+### C2. Check the environment
+
+1. **PHP version ≥ 8.0** (Strato panel → PHP-Einstellungen; the theme needs
+   at least 7.4, recommended 8.3+).
+2. WordPress itself updated (*Dashboard → Aktualisierungen*).
+
+### C3. Clean out the old content
+
+In wp-admin (each list view has a checkbox top-left to select all, then
+"Mehrfachaktionen → In den Papierkorb"):
+
+1. **Beiträge** (*Posts*): trash all old posts.
+2. **Seiten** (*Pages*): trash old pages. If a page with the slug `impressum`
+   already exists, you can keep it — the new theme shows its own legal notice
+   for that address either way.
+3. **Medien** (*Media*): delete old images/files. ⚠️ Only do this after C1 —
+   deleted media cannot be recovered without the backup. (Any image left here
+   will appear in the new photo gallery.)
+4. Empty the trash for posts and pages (*Papierkorb → leeren*), otherwise a
+   later import may create duplicates with `-2` suffixes.
+5. **Plugins**: deactivate what the new site does not need — in particular
+   "The Events Calendar", page builders (Elementor, WPBakery …) and old
+   theme-specific plugins. Keep security/backup plugins if present. Do NOT
+   delete them yet — deactivating is reversible and enough.
+6. If a **caching plugin** is active (WP Super Cache, W3 Total Cache …):
+   clear its cache and deactivate it until the migration is verified.
+
+### C4. Install the new site
+
+Now follow the standard steps from Part A:
+
+1. **A3** – upload and activate the theme.
+2. **A4** – import `content.xml` (tick the attachment download!). Because you
+   are importing directly on the final domain, the photo URLs are created
+   correctly from the start — the search-replace step from Part D is **not**
+   needed.
+3. **A5** – settings. Additionally check **Einstellungen → Lesen**
+   (*Settings → Reading*): "Deine Homepage zeigt" should be
+   **"Deine letzten Beiträge"** (*Your latest posts*) — the new theme renders
+   its own front page regardless, but this avoids a stray "posts page" from
+   the old configuration.
+4. **A6** – run the full verification checklist.
+
+### C5. Aftercare
+
+1. Watch the site for a few days; if anything is wrong, the C1 backups can
+   restore the old state completely.
+2. Once satisfied: delete the deactivated old plugins and the old theme
+   (*Design → Themes* → Twenty Twenty-One → Löschen; keep one default theme
+   like Twenty Twenty-Five as WordPress fallback).
+3. Old posts worth keeping as news can be restored individually from the C1
+   export: re-import the XML and trash everything except the wanted posts —
+   or paste their text into new posts using the trilingual template from
+   `HANDBOOK.md`.
+
+---
+
+## Part D: Connecting the real domain (after handover)
 
 `emmauswald-bleibt.de` currently points to the initiative's **existing** Strato
 account (an older WordPress with the Twenty Twenty-One theme). When the new
