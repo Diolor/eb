@@ -291,8 +291,15 @@
       endwhile;
       wp_reset_postdata();
 
-      // Historical news items shipped with the theme.
-      get_template_part( 'template-parts/news-static' );
+      if ( ! $ewb_news->have_posts() ) :
+        ?>
+        <p class="muted">
+          <span class="de">Noch keine News vorhanden. Importiert <code>data/content.xml</code> oder legt Beiträge an.</span>
+          <span class="en">No news yet. Import <code>data/content.xml</code> or create posts.</span>
+          <span class="tr">Henüz haber yok. <code>data/content.xml</code> dosyasını içe aktarın veya gönderi oluşturun.</span>
+        </p>
+        <?php
+      endif;
       ?>
 
     </div>
@@ -305,46 +312,92 @@
     <div class="section-head reveal">
       <p class="eyebrow"><span class="de">Kalender</span><span class="en">Calendar</span><span class="tr">Takvim</span></p>
       <h2><span class="de">Veranstaltungen</span><span class="en">Events</span><span class="tr">Etkinlikler</span></h2>
-      <p class="muted">
-        <span class="de">Es sind derzeit keine anstehenden Veranstaltungen vorhanden. Aktuelle Termine werden in unserer <a href="<?php echo esc_url( ewb_telegram_url() ); ?>" target="_blank" rel="noopener">Telegramgruppe</a> geteilt.</span>
-        <span class="en">There are currently no upcoming events. New dates are shared in our <a href="<?php echo esc_url( ewb_telegram_url() ); ?>" target="_blank" rel="noopener">Telegram group</a>.</span>
-        <span class="tr">Şu anda yaklaşan etkinlik bulunmuyor. Yeni tarihler <a href="<?php echo esc_url( ewb_telegram_url() ); ?>" target="_blank" rel="noopener">Telegram grubumuzda</a> paylaşılıyor.</span>
-      </p>
+      <?php
+      $ewb_today    = current_time( 'Y-m-d' );
+      $ewb_upcoming = new WP_Query(
+        array(
+          'post_type'      => 'ewb_event',
+          'posts_per_page' => -1,
+          'meta_key'       => 'ewb_event_date',
+          'orderby'        => 'meta_value',
+          'order'          => 'ASC',
+          'meta_query'     => array(
+            array(
+              'key'     => 'ewb_event_date',
+              'value'   => $ewb_today,
+              'compare' => '>=',
+              'type'    => 'DATE',
+            ),
+          ),
+        )
+      );
+      if ( ! $ewb_upcoming->have_posts() ) :
+        ?>
+        <p class="muted">
+          <span class="de">Es sind derzeit keine anstehenden Veranstaltungen vorhanden. Aktuelle Termine werden in unserer <a href="<?php echo esc_url( ewb_telegram_url() ); ?>" target="_blank" rel="noopener">Telegramgruppe</a> geteilt.</span>
+          <span class="en">There are currently no upcoming events. New dates are shared in our <a href="<?php echo esc_url( ewb_telegram_url() ); ?>" target="_blank" rel="noopener">Telegram group</a>.</span>
+          <span class="tr">Şu anda yaklaşan etkinlik bulunmuyor. Yeni tarihler <a href="<?php echo esc_url( ewb_telegram_url() ); ?>" target="_blank" rel="noopener">Telegram grubumuzda</a> paylaşılıyor.</span>
+        </p>
+      <?php endif; ?>
     </div>
 
-    <h3 class="timeline-title reveal"><span class="de">Vergangene Veranstaltungen</span><span class="en">Past events</span><span class="tr">Geçmiş etkinlikler</span></h3>
-    <div class="timeline">
-      <div class="timeline-item reveal">
-        <div class="timeline-date"><strong>25</strong><span class="de">Juni 2023</span><span class="en">June 2023</span><span class="tr">Haziran 2023</span></div>
-        <div class="timeline-body">
-          <h4><span class="de">Sommerfest</span><span class="en">Summer festival</span><span class="tr">Yaz şenliği</span></h4>
-          <p class="loc">📍 <span class="de">Park nahe dem Emmauswald · Sonntag, 25. Juni 2023, 14:00–18:00</span><span class="en">Park near the Emmaus Forest · Sunday, 25 June 2023, 2–6 pm</span><span class="tr">Emmaus Ormanı yakınındaki park · Pazar, 25 Haziran 2023, 14.00–18.00</span></p>
-          <p class="de">Liebe Nachbar*innen, liebe Neuköllner*innen, liebe Alle – die Initiative EmmausWaldBleibt veranstaltet am Sonntag, den 25.06.23, ein Sommerfest! Wir wollen mit Euch unsere bisherigen Erfolge feiern und diskutieren, wie es weitergeht: Wie sichern wir den EmmausWald dauerhaft? Wie wird der EmmausWald zu einem demokratischen Kiezort? Wie machen wir den EmmausWald berlinweit bekannt? Welche politischen Werkzeuge haben wir?</p>
-          <p class="en">Dear neighbours, dear Neuköllners, dear everyone – the initiative EmmausWaldBleibt is hosting a summer festival on Sunday, 25 June 2023! We want to celebrate our successes so far with you and discuss what comes next: How do we secure the Emmaus Forest permanently? How does the Emmaus Forest become a democratic neighbourhood space? How do we make the Emmaus Forest known across Berlin? Which political tools do we have?</p>
-          <p class="tr">Sevgili komşular, sevgili Neuköllnlüler, sevgili herkes – EmmausWaldBleibt girişimi 25.06.23 Pazar günü bir yaz şenliği düzenliyor! Bugüne kadarki başarılarımızı sizlerle kutlamak ve bundan sonrasını tartışmak istiyoruz: EmmausWald'ı kalıcı olarak nasıl güvence altına alırız? EmmausWald nasıl demokratik bir mahalle mekânı olur? EmmausWald'ı tüm Berlin'e nasıl tanıtırız? Hangi siyasi araçlara sahibiz?</p>
-        </div>
+    <?php if ( $ewb_upcoming->have_posts() ) : ?>
+      <div class="timeline">
+        <?php
+        while ( $ewb_upcoming->have_posts() ) :
+          $ewb_upcoming->the_post();
+          ?>
+          <div class="timeline-item reveal">
+            <div class="timeline-date"><?php echo ewb_timeline_date_html( get_post_meta( get_the_ID(), 'ewb_event_date', true ) ); ?></div>
+            <div class="timeline-body">
+              <?php the_content(); ?>
+            </div>
+          </div>
+          <?php
+        endwhile;
+        wp_reset_postdata();
+        ?>
       </div>
-      <div class="timeline-item reveal">
-        <div class="timeline-date"><strong>18</strong><span class="de">April 2023</span><span class="en">April 2023</span><span class="tr">Nisan 2023</span></div>
-        <div class="timeline-body">
-          <h4><span class="de">Ausschuss für Stadtentwicklung – Sitzung mit Diskussion über den EmmausWald</span><span class="en">Urban Development Committee – session with discussion of the EmmausWald</span><span class="tr">Kentsel Gelişim Komisyonu – EmmausWald'ın görüşüldüğü oturum</span></h4>
-          <p class="loc">📍 <span class="de">Rathaus Neukölln, Karl-Marx-Str. 83, 12040 Berlin · Dienstag, 18. April 2023</span><span class="en">Neukölln Town Hall, Karl-Marx-Str. 83, 12040 Berlin · Tuesday, 18 April 2023</span><span class="tr">Neukölln Belediye Binası, Karl-Marx-Str. 83, 12040 Berlin · Salı, 18 Nisan 2023</span></p>
-          <p class="de">Am 18.4. ab 17 Uhr wurde der B-Plan zur Rodung &amp; Neubau von Eigentumswohnungen auf den 4 Hektar EmmausWald im Ausschuss für Stadtentwicklung Neukölln diskutiert. Kommt alle zum Rathaus Neukölln, damit #EmmausWaldBleibt!</p>
-          <p class="en">On 18 April from 5 pm, the development plan for clearing and building condominiums on the 4 hectares of the EmmausWald was discussed in the Neukölln Urban Development Committee. Everyone came to Neukölln Town Hall so that #EmmausWaldBleibt!</p>
-          <p class="tr">18 Nisan'da saat 17.00'den itibaren, 4 hektarlık EmmausWald üzerinde ağaç kesimi ve mülk konut inşasına ilişkin imar planı, Neukölln Kentsel Gelişim Komisyonu'nda görüşüldü. #EmmausWaldBleibt için herkes Neukölln Belediye Binası'na geldi!</p>
-        </div>
+    <?php endif; ?>
+
+    <?php
+    $ewb_past = new WP_Query(
+      array(
+        'post_type'      => 'ewb_event',
+        'posts_per_page' => -1,
+        'meta_key'       => 'ewb_event_date',
+        'orderby'        => 'meta_value',
+        'order'          => 'DESC',
+        'meta_query'     => array(
+          array(
+            'key'     => 'ewb_event_date',
+            'value'   => $ewb_today,
+            'compare' => '<',
+            'type'    => 'DATE',
+          ),
+        ),
+      )
+    );
+    if ( $ewb_past->have_posts() ) :
+      ?>
+      <h3 class="timeline-title reveal"><span class="de">Vergangene Veranstaltungen</span><span class="en">Past events</span><span class="tr">Geçmiş etkinlikler</span></h3>
+      <div class="timeline">
+        <?php
+        while ( $ewb_past->have_posts() ) :
+          $ewb_past->the_post();
+          ?>
+          <div class="timeline-item reveal">
+            <div class="timeline-date"><?php echo ewb_timeline_date_html( get_post_meta( get_the_ID(), 'ewb_event_date', true ) ); ?></div>
+            <div class="timeline-body">
+              <?php the_content(); ?>
+            </div>
+          </div>
+          <?php
+        endwhile;
+        wp_reset_postdata();
+        ?>
       </div>
-      <div class="timeline-item reveal">
-        <div class="timeline-date"><strong>29</strong><span class="de">März 2023</span><span class="en">March 2023</span><span class="tr">Mart 2023</span></div>
-        <div class="timeline-body">
-          <h4><span class="de">Kiezspaziergang „Kiez statt Kies. Orte der Verdrängung, der Organisierung und des Widerstands.“</span><span class="en">Neighbourhood walk "Kiez statt Kies – places of displacement, organising and resistance"</span><span class="tr">Mahalle yürüyüşü "Kiez statt Kies – yerinden edilme, örgütlenme ve direniş mekânları"</span></h4>
-          <p class="loc">📍 <span class="de">S-Bahn Hermannstraße / NUR Gemüse Kebab, Hermannstr. 113a, Berlin · Mittwoch, 29. März 2023, 18:00</span><span class="en">Hermannstraße S-Bahn / NUR Gemüse Kebab, Hermannstr. 113a, Berlin · Wednesday, 29 March 2023, 6 pm</span><span class="tr">Hermannstraße S-Bahn / NUR Gemüse Kebab, Hermannstr. 113a, Berlin · Çarşamba, 29 Mart 2023, 18.00</span></p>
-          <p class="de">Organisiert von der Kiezversammlung44. Wir sind dabei mit der Station „Emmauswald bleibt!“ – Vorläufiges Programm: Start S-Bahn Hermannstraße: Sammeln, Willkommen · Mariendorfer Weg I: Antiduktus · Mariendorfer Weg II: Emmauswald bleibt! · Emser Straße I: Verdrängung von Kurd*innen aus der Emser Straße · Emser Straße II: Ein Häuserkampfbericht · Emser Straße III: Rote Lilly, Stadtteilkomitee Neukölln · Nogatstraße: Bericht von Mieter*innen nach Brand · Emser Str.: Syndikat.</p>
-          <p class="en">Organised by Kiezversammlung44 (Neighbourhood Assembly 44). We took part with the station "Emmauswald bleibt!" – Preliminary programme: start at Hermannstraße S-Bahn: gathering, welcome · Mariendorfer Weg I: Antiduktus · Mariendorfer Weg II: Emmauswald bleibt! · Emser Straße I: displacement of Kurdish residents from Emser Straße · Emser Straße II: a housing-struggle report · Emser Straße III: Rote Lilly, Neukölln district committee · Nogatstraße: tenants' report after the fire · Emser Str.: Syndikat.</p>
-          <p class="tr">Kiezversammlung44 (44. Mahalle Meclisi) tarafından düzenlendi. Biz de "Emmauswald bleibt!" durağıyla katıldık – Ön program: Başlangıç Hermannstraße S-Bahn: toplanma, karşılama · Mariendorfer Weg I: Antiduktus · Mariendorfer Weg II: Emmauswald bleibt! · Emser Straße I: Kürt sakinlerin Emser Straße'den yerinden edilmesi · Emser Straße II: bir konut mücadelesi anlatısı · Emser Straße III: Rote Lilly, Neukölln semt komitesi · Nogatstraße: yangın sonrası kiracıların anlatımı · Emser Str.: Syndikat.</p>
-        </div>
-      </div>
-    </div>
+    <?php endif; ?>
   </div>
 </section>
 
@@ -368,68 +421,53 @@
       <h2><span class="de">Der Emmauswald in den Medien</span><span class="en">The Emmaus Forest in the media</span><span class="tr">Medyada Emmaus Ormanı</span></h2>
     </div>
 
-    <div class="press-group reveal">
-      <h3>2026</h3>
-      <ul class="press-list">
-        <li><a href="https://www.ardmediathek.de/video/der-tag-in-berlin-und-brandenburg/vor-ort-im-emmauswald-neukoelln-streit-um-berlins-kleinen-wald/rbb/Y3JpZDovL3JiYl9kNjc4YzFiNS1jM2I4LTRmMzgtYTM3ZS02MzUxMzNkZTlkYzNfcHVibGljYXRpb24" target="_blank" rel="noopener"><span class="outlet">rbb / ARD-Mediathek</span><span class="date">16.04.2026</span><span class="title">Vor Ort im Emmauswald Neukölln: Streit um Berlins kleinen Wald (DER TAG in Berlin &amp; Brandenburg)</span></a></li>
-        <li><a href="https://www.nd-aktuell.de/artikel/1198464.stadtentwicklung-wald-oder-wohnungen-n-streit-um-den-emmauswald-in-neukoelln.html" target="_blank" rel="noopener"><span class="outlet">nd-aktuell.de</span><span class="date">20.03.2026</span><span class="title">Wald oder Wohnungen – Streit um den Emmauswald in Neukölln</span></a></li>
+    <?php
+    $ewb_press = new WP_Query(
+      array(
+        'post_type'      => 'ewb_press',
+        'posts_per_page' => -1,
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+      )
+    );
+    $ewb_press_year = null;
+    $ewb_kses       = array(
+      'span' => array( 'class' => true ),
+      'em'   => array( 'class' => true ),
+    );
+    while ( $ewb_press->have_posts() ) :
+      $ewb_press->the_post();
+      $ewb_item_year = get_the_date( 'Y' );
+      if ( $ewb_item_year !== $ewb_press_year ) :
+        if ( null !== $ewb_press_year ) :
+          ?>
       </ul>
     </div>
-
+          <?php
+        endif;
+        $ewb_press_year = $ewb_item_year;
+        ?>
     <div class="press-group reveal">
-      <h3>2025</h3>
+      <h3><?php echo esc_html( $ewb_item_year ); ?></h3>
       <ul class="press-list">
-        <li><a href="https://www.tagesspiegel.de/berlin/bezirke/kleinere-bauflache-hohere-hauser-geanderte-bauplane-fur-neukollner-emmauswald-13477144.html" target="_blank" rel="noopener"><span class="outlet">Tagesspiegel</span><span class="date">21.05.2025</span><span class="title">Kleinere Baufläche, höhere Häuser: Geänderte Baupläne für Neuköllner Emmauswald</span></a></li>
-        <li><a href="https://entwicklungsstadt.de/emmauswald-in-neukoelln-hoehere-und-dichtere-bebauung-geplant/" target="_blank" rel="noopener"><span class="outlet">ENTWICKLUNGSSTADT Berlin</span><span class="date">21.05.2025</span><span class="title">Emmauswald in Neukölln: Höhere und dichtere Bebauung geplant</span></a></li>
-        <li><a href="https://www.nd-aktuell.de/artikel/1188194.stadtentwicklung-emmauswald-in-neukoelln-kahlschlag-gegen-zahlung.html" target="_blank" rel="noopener"><span class="outlet">nd-aktuell.de</span><span class="date">13.01.2025</span><span class="title">Emmauswald in Neukölln: Kahlschlag gegen Zahlung</span></a></li>
+        <?php
+      endif;
+      $ewb_url        = get_post_meta( get_the_ID(), 'ewb_press_url', true );
+      $ewb_outlet     = get_post_meta( get_the_ID(), 'ewb_press_outlet', true );
+      $ewb_date_label = get_post_meta( get_the_ID(), 'ewb_press_date_label', true );
+      $ewb_sub        = get_post_meta( get_the_ID(), 'ewb_press_sub', true );
+      ?>
+        <li><a<?php echo $ewb_sub ? ' class="press-sub"' : ''; ?> href="<?php echo esc_url( $ewb_url ); ?>" target="_blank" rel="noopener"><span class="outlet"><?php echo esc_html( $ewb_outlet ); ?></span><span class="date"><?php echo esc_html( $ewb_date_label ); ?></span><span class="title"><?php echo wp_kses( get_the_title(), $ewb_kses ); ?></span></a></li>
+      <?php
+    endwhile;
+    if ( null !== $ewb_press_year ) :
+      ?>
       </ul>
     </div>
-
-    <div class="press-group reveal">
-      <h3>2024</h3>
-      <ul class="press-list">
-        <li><a href="https://www.tagesspiegel.de/berlin/bezirke/emmauswald-in-berlin-neukolln-naturschutzverbande-fordern-stopp-des-bauprojektes-12659384.html" target="_blank" rel="noopener"><span class="outlet">Tagesspiegel</span><span class="date">07.11.2024</span><span class="title">Emmauswald in Berlin-Neukölln: Naturschutzverbände fordern Stopp des Bauprojektes</span></a></li>
-        <li><a href="https://www.berliner-woche.de/neukoelln/c-umwelt/verbaende-fordern-neubauplaene-am-mariendorfer-weg-ad-acta-zu-legen_a428635" target="_blank" rel="noopener"><span class="outlet">Berliner Woche</span><span class="date">11/2024</span><span class="title">Für den Erhalt des Emmauswalds: Verbände fordern, Neubaupläne am Mariendorfer Weg ad acta zu legen</span></a></li>
-        <li><a href="https://facettenneukoelln.wordpress.com/2024/11/01/artenreiches-biotop-naturschutzverbaende-wollen-neukoellner-emmauswald-retten/" target="_blank" rel="noopener"><span class="outlet">FACETTEN-Magazin Neukölln</span><span class="date">01.11.2024</span><span class="title">„Artenreiches Biotop“: Naturschutzverbände wollen Neuköllner Emmauswald retten</span></a></li>
-        <li><a href="https://berlin.nabu.de/news/2024/35555.html" target="_blank" rel="noopener"><span class="outlet">NABU Berlin</span><span class="date">31.10.2024</span><span class="title">Emmauswald in Neukölln muss bleiben (Offener Brief)</span></a></li>
-        <li><a href="https://www.berliner-zeitung.de/mensch-metropole/berlin-wohnen-emmauswald-muss-neukoellns-gruene-lunge-eigentumswohnungen-von-vonovia-weichen-li.339622" target="_blank" rel="noopener"><span class="outlet">Berliner Zeitung</span><span class="date">02.05.2024</span><span class="title">„Emmauswald muss bleiben“: Neuköllns grüne Lunge soll Eigentumswohnungen weichen</span></a></li>
-        <li><a href="https://www.morgenpost.de/bezirke/neukoelln/article242561492/Emmauswald-Streit-um-Neukoellns-groessten-Wald-geht-weiter.html" target="_blank" rel="noopener"><span class="outlet">Berliner Morgenpost</span><span class="date">20.03.2024</span><span class="title">Emmauswald: Streit um Neuköllns größten Wald geht weiter</span></a></li>
-        <li><a href="https://www.berliner-zeitung.de/politik-gesellschaft/emmaus-kirchhof-senat-will-neukoellns-groessten-wald-roden-anwohner-protestieren-li.2197604" target="_blank" rel="noopener"><span class="outlet">Berliner Zeitung</span><span class="date">18.03.2024</span><span class="title">Emmaus-Kirchhof: Senat will Neuköllns größten Wald roden – Anwohner protestieren</span></a></li>
-        <li><a href="https://www.jungewelt.de/artikel/496570.emmauswald-kein-einziger-baum-darf-gef%C3%A4llt-werden.html" target="_blank" rel="noopener"><span class="outlet">junge Welt</span><span class="date">06.03.2024</span><span class="title">Emmauswald: Kein einziger Baum darf gefällt werden</span></a></li>
-        <li><a href="https://taz.de/Debatte-um-den-Neukoellner-Emmauswald/!6013694/" target="_blank" rel="noopener"><span class="outlet">taz</span><span class="date">17.01.2024</span><span class="title">Debatte um den Neuköllner Emmauswald</span></a></li>
-        <li><a href="https://www.tagesspiegel.de/berlin/bezirke/bauprojekt-neumarien-auf-dem-emmaus-friedhof-in-neukolln-senatsverwaltung-zieht-planungsverfahren-an-sich-10432750.html" target="_blank" rel="noopener"><span class="outlet">Tagesspiegel</span><span class="date">2024</span><span class="title">Bauprojekt „Neumarien“ auf dem Emmaus-Friedhof in Neukölln: Senatsverwaltung zieht Planungsverfahren an sich</span></a></li>
-      </ul>
-    </div>
-
-    <div class="press-group reveal">
-      <h3>2023</h3>
-      <ul class="press-list">
-        <li><a href="https://facettenneukoelln.wordpress.com/2023/10/31/initiative-sammelt-weiterhin-unterschriften-fuer-den-erhalt-des-groessten-neukoellner-waldes/" target="_blank" rel="noopener"><span class="outlet">FACETTEN-Magazin Neukölln</span><span class="date">31.10.2023</span><span class="title">Initiative sammelt weiterhin Unterschriften für den Erhalt des größten Neuköllner Waldes</span></a></li>
-        <li><a href="https://open.spotify.com/show/5xoqqWUNzaowBBSPPfz5gF" target="_blank" rel="noopener"><span class="outlet">Podcast Stadt Gräber</span><span class="date">2023</span><span class="title">81 Hektar</span></a></li>
-        <li><a href="https://berlin.nabu.de/news/2023/33939.html" target="_blank" rel="noopener"><span class="outlet">NABU Berlin</span><span class="date">19.09.2023</span><span class="title">Schockierende Entwicklung zum alten Emmaus-Kirchhoff</span></a></li>
-        <li><a href="https://www.rbb24.de/panorama/beitrag/2023/09/berlin-neukoelln-bezirk-senat-emmaus-kirchhof-wald.html" target="_blank" rel="noopener"><span class="outlet">rbb24</span><span class="date">13.09.2023</span><span class="title">Berliner Senat übernimmt Entscheidung über Neuköllner Bauvorhaben vom Bezirk</span></a></li>
-        <li><a href="https://www.morgenpost.de/bezirke/neukoelln/article239521309/berlin-neukoelln-emmauswald-wohnungen-bauen-faellen-protest.html" target="_blank" rel="noopener"><span class="outlet">Berliner Morgenpost</span><span class="date">13.09.2023</span><span class="title">Senat macht Druck: Neuköllns größter Wald soll fallen</span></a></li>
-        <li><a href="https://www.morgenpost.de/bezirke/neukoelln/article238888837/streit-friedhof-neukoelln-emmauswald-buergerinitiative-naturschutz.html" target="_blank" rel="noopener"><span class="outlet">Berliner Morgenpost</span><span class="date">08.07.2023</span><span class="title">Streit um früheren Friedhof in Neukölln noch nicht gelöst</span></a></li>
-        <li><a href="https://www.tagesspiegel.de/berlin/bezirke/nach-protest-gegen-bauprojekt-in-berlin-neukolln-bezirksamt-treibt-bebauungsplan-fur-emmauskirchhof-nicht-weiter-voran-10100005.html" target="_blank" rel="noopener"><span class="outlet">Tagesspiegel</span><span class="date">05.07.2023</span><span class="title">Nach Protest gegen Bauprojekt in Berlin-Neukölln: Bezirksamt treibt Bebauungsplan für Emmauskirchhof nicht weiter voran</span></a></li>
-        <li><a href="https://www.nd-aktuell.de/artikel/1172920.stadtentwicklung-emmauswald-in-neukoelln-baeume-in-gefahr.html" target="_blank" rel="noopener"><span class="outlet">nd</span><span class="date">03.05.2023</span><span class="title">Emmauswald in Neukölln: Bäume in Gefahr</span></a></li>
-        <li><a href="https://www.berliner-zeitung.de/mensch-metropole/berlin-wohnen-emmauswald-muss-neukoellns-gruene-lunge-eigentumswohnungen-von-vonovia-weichen-li.339622" target="_blank" rel="noopener"><span class="outlet">Berliner Zeitung+</span><span class="date">19.04.2023</span><span class="title">Muss Neuköllns „grüne Lunge“ Eigentumswohnungen von Vonovia weichen? <em class="paywall">(Paywall)</em></span></a></li>
-        <li><a href="https://www.nd-aktuell.de/artikel/1172574.versiegelung-berlin-emmauswald-in-neukoelln-gewinnt-zeit-vorerst-wird-nicht-gebaut.html" target="_blank" rel="noopener"><span class="outlet">nd</span><span class="date">18.04.2023</span><span class="title">Emmauswald in Neukölln gewinnt Zeit: Vorerst wird nicht gebaut</span></a></li>
-        <li><a href="https://www.morgenpost.de/bezirke/neukoelln/article238175399/Emotionale-Debatte-um-einen-Friedhof.html" target="_blank" rel="noopener"><span class="outlet">Berliner Morgenpost</span><span class="date">18.04.2023</span><span class="title">Im Rathaus Neukölln – Emotionale Debatte um einen Friedhof</span></a></li>
-        <li><a href="https://www.morgenpost.de/bezirke/neukoelln/article238146579/Wie-Emmauswald-bleibt-einen-Friedhof-retten-will.html" target="_blank" rel="noopener"><span class="outlet">Berliner Morgenpost PLUS</span><span class="date">16.04.2023</span><span class="title">Wie „Emmauswald bleibt!“ einen Friedhof retten will <em class="paywall">(Paywall)</em></span></a></li>
-        <li><a href="https://www.kuk-nk.de/?p=12845" target="_blank" rel="noopener"><span class="outlet">Kiez und Kneipe Neukölln</span><span class="date">07.04.2023</span><span class="title">Keine Profite mit der Miete! Rettet den Emmauswald in Neukölln!</span></a></li>
-        <li><a class="press-sub" href="https://www.kuk-nk.de/wp-content/pdf-archiv/kuk_nk_2023-04.pdf" target="_blank" rel="noopener"><span class="outlet"></span><span class="date"></span><span class="title">↳ <span class="de">Ausgabe April 2023 als PDF</span><span class="en">April 2023 issue as PDF</span><span class="tr">Nisan 2023 sayısı PDF olarak</span></span></a></li>
-        <li><a href="https://taz.de/Bebauung-von-Friedhoefen/!5923054/" target="_blank" rel="noopener"><span class="outlet">taz</span><span class="date">04.04.2023</span><span class="title">Bebauung von Friedhöfen: Grüne Infrastruktur in Gefahr</span></a></li>
-        <li><a href="https://www.instagram.com/p/CoCbrsyAJBV/" target="_blank" rel="noopener"><span class="outlet">rbb24 Abendschau</span><span class="date">29.01.2023</span><span class="title">Kiezspaziergang – Initiative will Emmauswald in Neukölln retten</span></a></li>
-        <li><a href="https://www.berliner-woche.de/neukoelln/c-umwelt/initiative-sammelt-unterschriften-gegen-bauprojekt-auf-dem-emmaus-friedhof_a368729" target="_blank" rel="noopener"><span class="outlet">Berliner Woche</span><span class="date">12.01.2023</span><span class="title">Initiative sammelt Unterschriften gegen Bauprojekt auf dem Emmaus-Friedhof</span></a></li>
-      </ul>
-    </div>
-
-    <div class="press-group reveal">
-      <h3>2022</h3>
-      <ul class="press-list">
-        <li><a href="https://www.tagesspiegel.de/berlin/bezirke/naturschutz-in-berlin-neukolln-initiative-fordert-schutz-des-waldchens-auf-dem-emmauskirchhof-9074695.html" target="_blank" rel="noopener"><span class="outlet">Tagesspiegel</span><span class="date">22.12.2022</span><span class="title">Protest gegen Bauprojekt in Berlin-Neukölln: Initiative fordert Schutz des Wäldchens auf dem Emmauskirchhof</span></a></li>
-      </ul>
-    </div>
+      <?php
+    endif;
+    wp_reset_postdata();
+    ?>
   </div>
 </section>
 
