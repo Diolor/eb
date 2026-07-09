@@ -1,0 +1,16 @@
+/*
+Theme Name: Emmauswald bleibt!
+Theme URI: https://github.com/Diolor/emmauswald-bleibt
+Author: Initiative Emmauswald bleibt!
+Author URI: https://github.com/Diolor
+Description: Trilingual (DE/EN/TR) one-page campaign theme for the initiative "Emmauswald bleibt!" – together for the preservation of Neukölln's largest forest. News entries are regular WordPress posts; everything else is hand-crafted static content.
+Version: 1.0.0
+Requires at least: 6.0
+Requires PHP: 7.4
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: emmauswald-bleibt
+Tags: one-column, custom-menu, translation-ready
+
+The actual styles live in assets/css/style.css and are enqueued in functions.php.
+*/

@@ -562,3 +562,10 @@ html.js .reveal.visible { opacity: 1; transform: none; }
   .timeline-item { grid-template-columns: 84px 1fr; gap: 1rem; }
   .news-item { padding: 1.4rem 1.2rem; }
 }
+
+/* ---------- WordPress: inner pages & alignment helpers ---------- */
+.impressum-page { min-height: 60vh; padding-top: 9rem; }
+.news-content img, .story img { max-width: 100%; height: auto; border-radius: 12px; }
+.aligncenter { display: block; margin-left: auto; margin-right: auto; }
+.alignleft { float: left; margin: .3rem 1.2rem 1rem 0; }
+.alignright { float: right; margin: .3rem 0 1rem 1.2rem; }
