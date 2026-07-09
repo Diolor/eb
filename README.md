@@ -28,9 +28,16 @@ the `main` branch still contains the plain static version.
    (otherwise the theme falls back to the initiative logo).
 
 **Hands-off migration:** the [`migration/`](migration/) folder contains a
-complete non-technical guide (`MIGRATION.md`) for Strato or wordpress.com;
-`migration/build.sh` assembles the deliverables (theme zip, content.xml,
-handbook) into `migration/dist/`.
+complete non-technical guide (`MIGRATION.md`) for Strato or wordpress.com.
+The ready-to-use deliverables (theme zip, content.xml, handbook) are
+committed in `migration/dist/` and kept in sync automatically by a
+pre-commit hook. After cloning, enable the hook once:
+
+```
+git config core.hooksPath .githooks
+```
+
+(Manual rebuild: `./migration/build.sh [tree-ish]`, defaults to `HEAD`.)
 
 No page needs to be assigned as the front page: `front-page.php` renders the
 one-pager automatically for the site's start page.

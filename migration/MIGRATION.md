@@ -13,8 +13,9 @@ No coding knowledge is required; every step happens in a web browser.
 | `dist/HANDBOOK.md` | Editor handbook (DE + EN) — how to add news/events/press/photos afterwards |
 | `MIGRATION.md` | This guide |
 
-To regenerate `dist/` from the git repository: `cd migration && ./build.sh`
-(requires the `wordpress-theme` branch checked out).
+The `dist/` folder is committed and kept up to date automatically (a
+pre-commit hook rebuilds it whenever the website changes). Manual rebuild if
+ever needed: `./migration/build.sh`.
 
 **Which part applies to you?**
 

@@ -1,0 +1,16 @@
+#!/bin/sh
+# Rebuild migration/dist/ so the committed deliverables always match the theme.
+# Enable once per clone:  git config core.hooksPath .githooks
+set -e
+
+staged=$(git diff --cached --name-only)
+[ -z "$staged" ] && exit 0
+
+# Only rebuild when the commit touches files that end up in the deliverables
+# (everything except the migration folder itself and git housekeeping files).
+relevant=$(printf '%s\n' "$staged" | grep -vE '^(migration/|\.gitignore$|\.gitattributes$|\.githooks/)' || true)
+[ -z "$relevant" ] && exit 0
+
+tree=$(git write-tree)
+sh "$(git rev-parse --show-toplevel)/migration/build.sh" "$tree"
+git add migration/dist
